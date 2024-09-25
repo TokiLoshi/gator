@@ -12,7 +12,7 @@ type Config struct {
 	CurrentUserName string `json:"current_user"`
 }
 
-const configFileName = "/workspace/.gatorconfig.json"
+const configFileName = ".gatorconfig.json"
 
 func getConfigFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
@@ -25,32 +25,27 @@ func getConfigFilePath() (string, error) {
 	return path, nil
 }
 
-func Read() (Config, error) {
-	fmt.Println("Commence Reading...")
-
-	var cfg Config
+func Read(cfg *Config) error {
 	path, err := getConfigFilePath()
 	if err != nil {
-		return cfg, fmt.Errorf("error generating file path name: %w", err)
+		return fmt.Errorf("error generating file path name: %w", err)
 	}
 
-	fmt.Printf("resutling file: %v\n", path)
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Printf("Blunder here: %v\n", err)
-		return cfg, fmt.Errorf("error opening file: %w", err)
+		return fmt.Errorf("error opening file: %w", err)
 	}
 
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&cfg)
+	err = decoder.Decode(cfg)
 
 	if err != nil {
-		return cfg, fmt.Errorf("error reading file, %w", err)
+		return fmt.Errorf("error reading file, %w", err)
 	}
 
-	return cfg, nil
+	return nil
 }
 
 func (cfg *Config) SetUser(user string) error {
