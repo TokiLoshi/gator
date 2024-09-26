@@ -11,6 +11,24 @@ import (
 	"github.com/google/uuid"
 )
 
+func resetUserTable(s *state, cmd command) error {
+	fmt.Println("restting all the users")
+	if len(cmd.Args) > 2 {
+		fmt.Printf("too many commands")
+		os.Exit(1)
+	}
+	ctx := context.Background()
+	queries := s.db
+	err := queries.ResetUsers(ctx)
+	if err != nil { 
+		fmt.Printf("error resetting database %v", err)
+		os.Exit(1)
+	}
+	
+	os.Exit(0)
+	return nil
+}
+
 func registerUser(s *state, cmd command) error {
 	fmt.Println("tyring to register user")
 	ctx := context.Background()
