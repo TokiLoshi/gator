@@ -14,3 +14,6 @@ SELECT * FROM users WHERE name = $1;
 -- name: ResetUsers :exec
 DELETE FROM users 
 RETURNING *;
+
+-- name: GetAllUsers :many
+SELECT * FROM users;

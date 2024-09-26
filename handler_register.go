@@ -11,6 +11,31 @@ import (
 	"github.com/google/uuid"
 )
 
+func getAllUsers(s *state, cmd command) error {
+	fmt.Println("getting all users")
+	if len(cmd.Args) > 2 {
+		return fmt.Errorf("not enough arguments - must have at least 2")
+	}
+	ctx := context.Background()
+	queries := s.db 
+	users, err := queries.GetAllUsers(ctx)
+	if err != nil {
+		fmt.Println("error fetching users from queries")
+		os.Exit(1)
+	}
+
+	for index, user := range users {
+		if index == len(users) -1 {
+			fmt.Println(user.Name + " (current)")
+			continue
+		}
+		fmt.Println(user.Name)
+	}
+	
+	os.Exit(0)
+	return nil
+}
+
 func resetUserTable(s *state, cmd command) error {
 	fmt.Println("restting all the users")
 	if len(cmd.Args) > 2 {
