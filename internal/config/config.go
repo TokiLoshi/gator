@@ -25,27 +25,28 @@ func getConfigFilePath() (string, error) {
 	return path, nil
 }
 
-func Read(cfg *Config) error {
+func Read() (Config, error) {
 	path, err := getConfigFilePath()
 	if err != nil {
-		return fmt.Errorf("error generating file path name: %w", err)
+		return Config{}, fmt.Errorf("error generating file path name: %w", err)
 	}
 
 	file, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("error opening file: %w", err)
+		return Config{}, fmt.Errorf("error opening file: %w", err)
 	}
 
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	err = decoder.Decode(cfg)
+	cfg := Config{}
+	err = decoder.Decode(&cfg)
 
 	if err != nil {
-		return fmt.Errorf("error reading file, %w", err)
+		return Config{}, fmt.Errorf("error reading file, %w", err)
 	}
 
-	return nil
+	return cfg, nil
 }
 
 func (cfg *Config) SetUser(user string) error {

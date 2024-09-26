@@ -1,30 +1,48 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 
 	"github.com/TokiLoshi/gator/internal/config"
+	"github.com/TokiLoshi/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
+type state struct {
+	db *database.Queries
+	cfg *config.Config
+}
 
 
 func main() {
-
-	cfg := &config.Config{}
-	err := config.Read(cfg)
+	cfg, err := config.Read()
 	if err != nil {
 		fmt.Printf("Error reading the config")
-		return
+		os.Exit(1)
 	}
-	state := &State{configuration: cfg}
 
-	commands := &Commands{
-		handlers: map[string]func(*State, *Command) error{},
+	db, err := sql.Open("postgres", cfg.DBUrl)
+	if err != nil {
+		fmt.Println("Error opening database")
+		os.Exit(1)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
+
+	programState := &state{
+		cfg: &cfg, 
+		db: dbQueries,
+	
+	}
+
+	commands := commands{
+		registeredCommands: make(map[string]func(*state, command) error),
 	}
 
 	commands.register("login", handlerLogin)
-	
+	commands.register("register", registerUser)
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
 	args := os.Args
@@ -33,22 +51,16 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("user instructions: %v\n", args)
+	
 	argName := args[1]
-
 	allArgs := args[2:]
-	cmd := &Command{name: argName, args: allArgs}
 
-	// Execute the command if it exists 
-	if handler, exists := commands.handlers[cmd.name]; exists {
-		err := handler(state, cmd)
-		if err != nil {
-			fmt.Printf("error executing command: %v\n", err)
-			os.Exit(1)
-		}
-	} else {
-		fmt.Println("Command not recognized.")
+	fmt.Println(dbQueries)
+
+	err = commands.run(programState, command{Name: argName, Args: allArgs})
+	if err != nil {
+		fmt.Printf("error running command: %v\n", err)
 		os.Exit(1)
 	}
-
 	os.Exit(0)
 }
