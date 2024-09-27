@@ -45,6 +45,7 @@ func main() {
 	commands.register("register", registerUser)
 	commands.register("reset", resetUserTable)
 	commands.register("users", getAllUsers)
+	commands.register("agg", handleFeed)
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
 	args := os.Args
@@ -52,7 +53,6 @@ func main() {
 	// 	fmt.Printf("%v arguments are too few, need at least 2\n", len(args))
 	// 	os.Exit(1)
 	// }
-	fmt.Printf("user instructions: %v\n", args)
 	
 	argName := args[1]
 	allArgs := args[2:]
