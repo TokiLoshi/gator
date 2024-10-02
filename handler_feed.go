@@ -2,12 +2,17 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"fmt"
 	"html"
 	"io"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/TokiLoshi/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -84,4 +89,35 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	return &feed, nil
+}
+
+func handleAddFeed(s *state, cmd command) error {
+	if len(cmd.Args) != 2 {
+		return fmt.Errorf("not enough commands ")
+	}
+	name := cmd.Args[0]
+	url := cmd.Args[1]
+	currentUser := s.cfg.CurrentUserName
+	ctx := context.Background()
+	queries := s.db
+	user, err := queries.GetUser(ctx, currentUser)
+	if err != nil {
+		return fmt.Errorf("error getting user details %w", err)
+	}
+	fmt.Printf("Current user: %v\n", user)
+	userID := uuid.NullUUID{UUID: user.ID, Valid: true}
+	newFeed, err := queries.CreateFeed(ctx, database.CreateFeedParams {
+		ID: uuid.New(),
+		CreatedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		Name: name, 
+		Url: url,
+		UserID: userID,
+	})
+	if err != nil {
+		return fmt.Errorf("error creating feed %w", err)
+	}
+	fmt.Printf("New feed: %v", newFeed)
+	return nil
+
 }

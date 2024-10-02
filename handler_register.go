@@ -23,6 +23,13 @@ func getAllUsers(s *state, cmd command) error {
 		fmt.Println("error fetching users from queries")
 		os.Exit(1)
 	}
+	for _, user := range users {
+		if user.Name == s.cfg.CurrentUserName {
+			fmt.Printf("* %v (current)\n", user.Name)
+			continue
+		}
+		fmt.Printf("* %v\n", user.Name)
+	}
 
 	for index, user := range users {
 		if index == len(users) -1 {

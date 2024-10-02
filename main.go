@@ -46,6 +46,7 @@ func main() {
 	commands.register("reset", resetUserTable)
 	commands.register("users", getAllUsers)
 	commands.register("agg", handleFeed)
+	commands.register("addfeed", handleAddFeed)
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
 	args := os.Args
