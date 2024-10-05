@@ -44,7 +44,7 @@ func getAllUsers(s *state, cmd command) error {
 }
 
 func resetUserTable(s *state, cmd command) error {
-	fmt.Println("restting all the users")
+	fmt.Println("resetting all the users")
 	if len(cmd.Args) > 2 {
 		fmt.Printf("too many commands")
 		os.Exit(1)

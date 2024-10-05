@@ -105,14 +105,13 @@ func handleAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("error getting user details %w", err)
 	}
 	fmt.Printf("Current user: %v\n", user)
-	userID := uuid.NullUUID{UUID: user.ID, Valid: true}
 	newFeed, err := queries.CreateFeed(ctx, database.CreateFeedParams {
 		ID: uuid.New(),
 		CreatedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		Name: name, 
 		Url: url,
-		UserID: userID,
+		UserID: user.ID,
 	})
 	if err != nil {
 		return fmt.Errorf("error creating feed %w", err)
@@ -121,3 +120,33 @@ func handleAddFeed(s *state, cmd command) error {
 	return nil
 
 }
+
+// Takes no arguments, prints all feeds in db
+// Include the name of the feed 
+// Url of the feed 
+// name of the user (might need a new sql query)
+
+func getAllFeeds(s *state, cmd command) error {
+	if len(cmd.Args) > 1 {
+		return fmt.Errorf("not enough arguments - must have 2")
+	}
+	ctx := context.Background()
+	queries := s.db
+	feeds, err := queries.GetFeeds(ctx)
+	if err != nil {
+		return fmt.Errorf("error getting all feeds: %w", err)
+	}
+
+	for _, feed := range feeds {
+		fmt.Printf("%v\n", feed.Name)
+		fmt.Printf("%v\n", feed.Url)
+		username, err := queries.GetUserById(ctx, feed.UserID)
+		if err != nil {
+			fmt.Print("couldn't find user here")
+			continue
+		}
+		fmt.Printf("%v\n", username.Name)
+	} 
+
+	return nil
+} 

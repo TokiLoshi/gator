@@ -47,6 +47,7 @@ func main() {
 	commands.register("users", getAllUsers)
 	commands.register("agg", handleFeed)
 	commands.register("addfeed", handleAddFeed)
+	commands.register("feeds", getAllFeeds)
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
 	args := os.Args
@@ -57,8 +58,6 @@ func main() {
 	
 	argName := args[1]
 	allArgs := args[2:]
-
-	fmt.Println(dbQueries)
 
 	err = commands.run(programState, command{Name: argName, Args: allArgs})
 	if err != nil {

@@ -8,7 +8,6 @@ import (
 
 
 func handlerLogin(s *state, cmd command) error {
-	fmt.Println("handleLogin")
 	ctx := context.Background()
 	queries := s.db
 	username := cmd.Args[0]

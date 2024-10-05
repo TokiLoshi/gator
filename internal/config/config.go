@@ -19,7 +19,6 @@ func getConfigFilePath() (string, error) {
 	if err != nil {
 		return homeDir, fmt.Errorf("error getting home path file: %w", err)
 	}
-	fmt.Printf("home directory: %v\n", homeDir)
 	path := filepath.Join(homeDir, configFileName)
 
 	return path, nil
