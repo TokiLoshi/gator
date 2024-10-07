@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handleFollow(s *state, cmd command) error {
+func handleFollow(s *state, cmd command, currentUser database.User) error {
 	fmt.Printf("adding new follow")
 	if len(cmd.Args) != 1 {
 		return fmt.Errorf("not enough commands")
@@ -20,12 +20,7 @@ func handleFollow(s *state, cmd command) error {
 	ctx := context.Background()
 
 	// current user 
-	currentUser := s.cfg.CurrentUserName 
-	user, err := queries.GetUser(ctx, currentUser)
-	
-	if err != nil {
-		return fmt.Errorf("error returning user information: %w", err)
-	}
+	user := currentUser
 
 	// feed to follow 
 	url := cmd.Args[0] 
@@ -59,16 +54,12 @@ func handleFollow(s *state, cmd command) error {
 	return nil
 }
 
-func getFollowing(s *state, cmd command) error {
+func getFollowing(s *state, cmd command, currentUser database.User) error {
 
 	ctx := context.Background()
 	queries := s.db 
 
-	currentUser := s.cfg.CurrentUserName
-	user, err := queries.GetUser(ctx, currentUser)
-	if err != nil {
-		return fmt.Errorf("error getting user: %w", err)
-	}
+	user := currentUser
 	user_id := user.ID 
 	follows, err := queries.GetFeedFollowsForUser(ctx, user_id)
 	if err != nil {

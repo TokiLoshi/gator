@@ -91,19 +91,15 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	return &feed, nil
 }
 
-func handleAddFeed(s *state, cmd command) error {
+func handleAddFeed(s *state, cmd command, currentUser database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("not enough commands ")
 	}
 	name := cmd.Args[0]
 	url := cmd.Args[1]
-	currentUser := s.cfg.CurrentUserName
+	user := currentUser
 	ctx := context.Background()
 	queries := s.db
-	user, err := queries.GetUser(ctx, currentUser)
-	if err != nil {
-		return fmt.Errorf("error getting user details %w", err)
-	}
 	fmt.Printf("Current user: %v\n", user)
 	newFeed, err := queries.CreateFeed(ctx, database.CreateFeedParams {
 		ID: uuid.New(),
@@ -123,7 +119,7 @@ func handleAddFeed(s *state, cmd command) error {
 		Name: "follow",
 		Args: []string{url},
 	}
-	err = handleFollow(s, followCmd)
+	err = handleFollow(s, followCmd, user)
 	if err != nil {
 		return fmt.Errorf("issue auto following: %w", err)
 	}
