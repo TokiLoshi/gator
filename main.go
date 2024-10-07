@@ -48,6 +48,8 @@ func main() {
 	commands.register("agg", handleFeed)
 	commands.register("addfeed", handleAddFeed)
 	commands.register("feeds", getAllFeeds)
+	commands.register("follow", handleFollow)
+	commands.register("following", getFollowing)
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
 	args := os.Args

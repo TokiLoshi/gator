@@ -117,6 +117,16 @@ func handleAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("error creating feed %w", err)
 	}
 	fmt.Printf("New feed: %v", newFeed)
+	fmt.Printf("Automatically adding follow")
+
+	followCmd := command {
+		Name: "follow",
+		Args: []string{url},
+	}
+	err = handleFollow(s, followCmd)
+	if err != nil {
+		return fmt.Errorf("issue auto following: %w", err)
+	}
 	return nil
 
 }
