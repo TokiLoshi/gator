@@ -45,13 +45,15 @@ func main() {
 	commands.register("register", registerUser)
 	commands.register("reset", resetUserTable)
 	commands.register("users", getAllUsers)
-	commands.register("agg", handleFeed)
-		commands.register("feeds", getAllFeeds)
+	commands.register("agg", handlerAgg)
+	commands.register("feeds", getAllFeeds)
+	commands.register("handleFeed", handleFeed)
 	// Needs middleware
 	commands.register("addfeed", middlewareLoggedIn(handleAddFeed))
 	commands.register("follow", middlewareLoggedIn(handleFollow))
 	commands.register("unfollow", middlewareLoggedIn(handleUnfollow))
 	commands.register("following", middlewareLoggedIn(getFollowing))
+
 
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 

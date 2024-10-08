@@ -33,7 +33,7 @@ type RSSItem struct {
 }
 
 func handleFeed(s *state, cmd command) error {
-	if len(cmd.Args) > 3 {
+	if len(cmd.Args) < 3 {
 		fmt.Println("error in feed- too many arguments")
 		os.Exit(1)
 	}
@@ -44,7 +44,7 @@ func handleFeed(s *state, cmd command) error {
 	if err != nil {
 		fmt.Printf("error fetching feed: %v\n", err)
 	}
-	
+	fmt.Printf("state: %v\n", s.cfg.CurrentUserName)
 	if len(feed.Channel.Item) > 0 {
 	for i := range feed.Channel.Item {
 		feed.Channel.Item[i].Title = html.UnescapeString(feed.Channel.Item[i].Title)
