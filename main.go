@@ -53,7 +53,7 @@ func main() {
 	commands.register("follow", middlewareLoggedIn(handleFollow))
 	commands.register("unfollow", middlewareLoggedIn(handleUnfollow))
 	commands.register("following", middlewareLoggedIn(getFollowing))
-
+	commands.register("browse", handleBrowse)
 
 	// cmd := &Command{name: "login", args: []string{"claireece"}}
 
